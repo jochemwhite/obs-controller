@@ -20,6 +20,11 @@ const envSchema = z.object({
     emptyToUndefined,
     z.coerce.number().int().positive().default(3000),
   ),
+  TOKEN_ENCRYPTION_KEY: z.string(),
+  SUPABASE_URL: z.string(),
+  SUPABASE_SECRET_KEY: z.string(),
+  TWITCH_CLIENT_ID: z.string(),
+  TWITCH_CLIENT_SECRET: z.string(),
 });
 
 export const env = envSchema.parse(process.env);

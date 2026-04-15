@@ -90,16 +90,19 @@ export async function handleSceneSwitchFromScore(
   const shouldShowMessage =
     isMessageRangeScore && messageBadStreak >= MESSAGE_BAD_STREAK_TO_SHOW;
 
-  if (!willSwitchScene && messageVisibleState !== shouldShowMessage) {
+  const isOnMainScene = currentSceneMode === "main";
+  const desiredMessageState = isOnMainScene && shouldShowMessage;
+
+  if (!willSwitchScene && messageVisibleState !== desiredMessageState) {
     try {
       await obs.setSourceVisibilityInScene(
-        observedState.sceneUuid,
+        MAIN_SCENE_UUID,
         MESSAGE_SOURCE_NAME,
-        shouldShowMessage,
+        desiredMessageState,
       );
-      messageVisibleState = shouldShowMessage;
+      messageVisibleState = desiredMessageState;
       console.log(
-        `[scene-switch] ${update.timestamp} message source "${MESSAGE_SOURCE_NAME}" -> ${shouldShowMessage ? "ON" : "OFF"} (score=${update.totalScore})`,
+        `[scene-switch] ${update.timestamp} message source "${MESSAGE_SOURCE_NAME}" -> ${desiredMessageState ? "ON" : "OFF"} (score=${update.totalScore})`,
       );
     } catch (error) {
       console.error(

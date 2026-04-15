@@ -18,6 +18,16 @@ type StartScoringMonitorOptions = {
   onScoreUpdate?: ScoreUpdateCallback;
 };
 
+type ScoreSnapshot = {
+  totalScore: number;
+  srtScore: number;
+  rtspScore: number;
+  activeSrtConnections: number;
+  activeRtspSessions: number;
+};
+
+let lastLoggedSnapshot: ScoreSnapshot | null = null;
+
 async function pollAndLogScore(onScoreUpdate?: ScoreUpdateCallback) {
   try {
     const response = await mediaMtxClient.get<string>(METRICS_ENDPOINT, {
@@ -32,9 +42,30 @@ async function pollAndLogScore(onScoreUpdate?: ScoreUpdateCallback) {
     const weightedScore = Math.round((srt.score + rtsp.score) / totalWeight);
     const timestamp = new Date().toISOString();
 
-    console.log(
-      `[stream-score] ${timestamp} total=${weightedScore}/100 srt=${srt.score}/100 (conns=${srt.activeConnections}) rtsp=${rtsp.score}/100 (sessions=${rtsp.activeSessions})`,
-    );
+    const currentSnapshot: ScoreSnapshot = {
+      totalScore: weightedScore,
+      srtScore: srt.score,
+      rtspScore: rtsp.score,
+      activeSrtConnections: srt.activeConnections,
+      activeRtspSessions: rtsp.activeSessions,
+    };
+
+    const hasChanged =
+      !lastLoggedSnapshot ||
+      currentSnapshot.totalScore !== lastLoggedSnapshot.totalScore ||
+      currentSnapshot.srtScore !== lastLoggedSnapshot.srtScore ||
+      currentSnapshot.rtspScore !== lastLoggedSnapshot.rtspScore ||
+      currentSnapshot.activeSrtConnections !==
+        lastLoggedSnapshot.activeSrtConnections ||
+      currentSnapshot.activeRtspSessions !==
+        lastLoggedSnapshot.activeRtspSessions;
+
+    if (hasChanged) {
+      console.log(
+        `[stream-score] ${timestamp} total=${weightedScore}/100 srt=${srt.score}/100 (conns=${srt.activeConnections}) rtsp=${rtsp.score}/100 (sessions=${rtsp.activeSessions})`,
+      );
+      lastLoggedSnapshot = currentSnapshot;
+    }
 
     if (onScoreUpdate) {
       await onScoreUpdate({
