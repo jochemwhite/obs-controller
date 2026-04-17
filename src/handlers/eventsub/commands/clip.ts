@@ -19,7 +19,7 @@ export const handleClipCommand: ChatCommandHandler = async ({
     );
 
     await twitchApi.chat.sendMessage({
-      message: `Oh wat nou weer? Thanks for the clip I guess...`,
+      message: `Wat loop je nou te clippen joh!`,
       replyToMessageId: message.message_id,
     });
   } catch (error: any) {

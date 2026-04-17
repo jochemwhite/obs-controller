@@ -3,6 +3,9 @@ import { startScoringMonitor } from "./scoring/monitor";
 import { handleSceneSwitchFromScore } from "./scoring/scene-switch-callback";
 import { TwitchEventSubReceiver } from "./twitch/eventsub-client";
 import { handlers } from "./handlers/eventHandler";
+import { startControlApiServer } from "./server/control-api";
+
+startControlApiServer();
 
 void obs.connect().then(() => {
   startScoringMonitor({

@@ -20,6 +20,10 @@ const envSchema = z.object({
     emptyToUndefined,
     z.coerce.number().int().positive().default(3000),
   ),
+  CONTROL_API_KEY: z.preprocess(
+    emptyToUndefined,
+    z.string().default("change-me-control-key"),
+  ),
   TOKEN_ENCRYPTION_KEY: z.string(),
   SUPABASE_URL: z.string(),
   SUPABASE_SECRET_KEY: z.string(),

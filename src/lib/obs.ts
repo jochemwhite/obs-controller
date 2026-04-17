@@ -33,6 +33,18 @@ export class ObsController {
     await this.obs.call("SetCurrentProgramScene", { sceneUuid });
   }
 
+  async startStream() {
+    await this.obs.call("StartStream");
+  }
+
+  async stopStream() {
+    await this.obs.call("StopStream");
+  }
+
+  async getStreamStatus() {
+    return await this.obs.call("GetStreamStatus");
+  }
+
   async setSourceVisibilityInScene(
     sceneUuid: string,
     sourceName: string,
