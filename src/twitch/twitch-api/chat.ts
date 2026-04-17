@@ -9,7 +9,7 @@ export class TwitchChatClient extends TwitchApiBaseClient {
     const response = await this.appApi().post(`/chat/messages`, {
       message,
       broadcaster_id: this.broadcaster_id,
-      sender_id: "956066753",
+      sender_id: this.broadcaster_id,
       reply_parent_message_id: replyToMessageId ? replyToMessageId : null,
       // for_source_only: true,
     });
